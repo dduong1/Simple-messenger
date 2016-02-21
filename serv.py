@@ -146,4 +146,3 @@ def broadcast (server_socket, sock, message, msgtype):
 if __name__ == "__main__":
 
     sys.exit(chat_server())
-    

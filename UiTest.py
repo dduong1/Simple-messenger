@@ -41,8 +41,6 @@ class GuiPart:
         self.groupchatdisplay = Frame(master,bg ="grey", width=200, height=600, padx=0, pady=0)
         self.groupchatdisplay.pack(side=LEFT,fill=Y) #We use pack to setup the elements
 
-
-
         self.chatdisplay = ttk.Notebook(master)
         self.f1 = ttk.Frame(self.chatdisplay)
         self.chatdisplay.add(self.f1, text='All')
@@ -318,5 +316,5 @@ if __name__ == "__main__":
     pseudo = pseudolist[random.randint(0,49)] #User PSEUDO is random
 
     client = ThreadedClient(root)
-    root.title(pseudo)
+    root.title("https://github.com/dduong1/Simple-messenger        " + pseudo)
     root.mainloop()
