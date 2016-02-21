@@ -47,18 +47,17 @@ def chat_server():
 
                 print ("Client (%s, %s) connected" % addr)
 
-                #on stream tous les nouveaux utilisateur a la personne qui vient de se connecter
+                #We stream all new users
                 tmpdict = {}
 
                 for keyf in SOCKET_LIST_user.keys():
-                    #tmpdict.append(str(keyf[1]) + ':' + SOCKET_LIST_user[keyf])
                     tmpdict [(str(keyf[0]) + " "+ str(keyf[1]))] =  SOCKET_LIST_user[keyf]
                 #sjson = json.dumps(tmpdict)
                 mymsg = cMessage("listuser",PORT, sockfd.getpeername(),"Server", tmpdict)
                 #sjson = json.dumps(mymsg.__dict__)
 
                 broadcast(server_socket, sockfd, mymsg,0)
-                #on met a jour socket list user en ajoutant le nouvel utilisateur
+                #Update socket list with new user
                 SOCKET_LIST_user[addr] = ""
 
 
@@ -72,24 +71,20 @@ def chat_server():
                     msg = data.decode("utf-8")
                     tmp = (sock.getpeername()[0]) + " " + str(sock.getpeername()[1])
 
-                    #Serialise et deserialise l objet
+                    #Process incoming
                     if msg:
                         # there is something in the socket
-                        msg = json.loads(msg)#data.decode("utf-8")
-
+                        msg = json.loads(msg)
 
                         if msg['msgtype'] == "exitserv" :
                             server_socket.close()
                             sys.exit()
                         elif msg['msgtype'] == "userconnect":
-                            #Recuperation du pseudo et broadcast a tous les utilisateurs
                             SOCKET_LIST_user[sock.getpeername()] = msg['msg']
-                            #On broadcast l utilisateur qui vient de se connecter
                             mymsg = cMessage("userconnect",tmp, PORT,"Server", msg['msg'])
                             broadcast(server_socket, sock, mymsg,1)
                         elif msg['msgtype'] == "message":
                             mymsg = cMessage("message",tmp, msg["destinataire"],msg["chatname"], msg['msg'])
-                            #sjson = json.dumps(mymsg.__dict__)
                             broadcast(server_socket, sock, mymsg,1)
                         elif msg['msgtype'] == "userchatroom+":
                             mymsg = cMessage("userchatroom+",tmp, msg["destinataire"],msg["chatname"], msg['msg'])
@@ -97,22 +92,15 @@ def chat_server():
                         else:
                             print("errrroooorrrrrrrrr")
                             break;
-                            #broadcast(server_socket, sock, "received by server\n",0)
-                            #broadcast(server_socket, sock, "\r" + '[' + str(sock.getpeername()) + '] ' + msg + '\n',0)
-                            #broadcast(server_socket, sock, "\r" + '[' + SOCKET_LIST_user[sock.getpeername()] + ']\t\t' + msg + '\n',1)
+
                     else:
-                        # remove the socket that's broken
+                        #remove the socket that's broken
                         if sock in SOCKET_LIST:
                             SOCKET_LIST.remove(sock)
                             del SOCKET_LIST_user[sock.getpeername()]
 
-
                         mymsg = cMessage("userdisconnect",tmp, PORT,"SERVER", "disconnected")
-                        #sjson = json.dumps(mymsg.__dict__)
                         broadcast(server_socket, sock, mymsg,1)
-                        # at this stage, no data means probably the connection has been broken
-                        #broadcast(server_socket, sock, "Client (%s, %s) is offline\n" % addr,1)
-
                 # exception
                 except:
                     print (sys.exc_info()[0])
@@ -158,4 +146,4 @@ def broadcast (server_socket, sock, message, msgtype):
 if __name__ == "__main__":
 
     sys.exit(chat_server())
-    print("server is running")
+    
