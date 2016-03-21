@@ -53,7 +53,9 @@ class GuiPart:
         Grid.columnconfigure(self.groupchatdisplay, 0, weight=1)
         Grid.rowconfigure(self.groupchatdisplay, 0, weight=1)
         self.ListboxChat = Listbox(self.groupchatdisplay,bg = "#8FA1CB")
-        self.ListboxChat.grid(row=0,column = 0, sticky=N+S+E+W) #We need to seperate grid otherwise return NONE object
+        self.ListboxChat.grid(row=0,column = 0, sticky=N+S+E+W)                #We need to seperate grid otherwise return NONE object
+
+        self.ListboxChat = Listbox(self.groupchatdisplay,bg = "#8FA1CB").grid(row=0,column = 0, sticky=N+S+E+W)  
 
         Grid.columnconfigure(self.userchatdisplay, 0, weight=1)
         Grid.rowconfigure(self.userchatdisplay, 0, weight=1)
