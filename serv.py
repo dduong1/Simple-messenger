@@ -1,9 +1,10 @@
 # chat_server.py
-
+import tkinter as tk
 import sys
 import socket
 import select
 import json
+import threading
 
 HOST = '127.0.0.1'
 SOCKET_LIST = []
@@ -142,7 +143,29 @@ def broadcast (server_socket, sock, message, msgtype):
                         SOCKET_LIST.remove(socket)
                         del SOCKET_LIST_user[socket.getpeername()]
 
+class ThreadedClient:
+    def __init__(self, master):
+        self.master = master
+        self.running = 1
+        self.thread1 = threading.Thread(target=self.workerThread1)
+        self.thread1.daemon = True
+        self.thread1.start()
+
+
+    def workerThread1(self):
+        chat_server()
+
+    def endApplication(self):
+        self.running = 0
+
+
 
 if __name__ == "__main__":
 
-    sys.exit(chat_server())
+
+    root = tk.Tk()
+    root.title("Server status")
+    tk.Button(root, text="Server is running").pack()
+    client = ThreadedClient(root)
+    tk.mainloop()
+    sys.exit(client.endApplication())

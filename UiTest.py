@@ -53,9 +53,7 @@ class GuiPart:
         Grid.columnconfigure(self.groupchatdisplay, 0, weight=1)
         Grid.rowconfigure(self.groupchatdisplay, 0, weight=1)
         self.ListboxChat = Listbox(self.groupchatdisplay,bg = "#8FA1CB")
-        self.ListboxChat.grid(row=0,column = 0, sticky=N+S+E+W)                #We need to seperate grid otherwise return NONE object
-
-        self.ListboxChat = Listbox(self.groupchatdisplay,bg = "#8FA1CB").grid(row=0,column = 0, sticky=N+S+E+W)  
+        self.ListboxChat.grid(row=0,column = 0, sticky=N+S+E+W) #We need to seperate grid otherwise return NONE object
 
         Grid.columnconfigure(self.userchatdisplay, 0, weight=1)
         Grid.rowconfigure(self.userchatdisplay, 0, weight=1)
@@ -80,8 +78,9 @@ class GuiPart:
         self.ListboxChat.delete(0, END)
         if(selectedtab != 1):
             for cc in activetabuser[selectedtab]:
-                tmp = SOCKET_LIST_user[cc]
-                self.ListboxChat.insert(END,tmp)
+                if(cc in SOCKET_LIST_user.keys()):
+                    tmp = SOCKET_LIST_user[cc]
+                    self.ListboxChat.insert(END,tmp)
 
     #Textbox callback, manage the information sent to Server
     def callback(self,event):
@@ -174,6 +173,8 @@ class GuiPart:
                             ww = self.chatdisplay.winfo_children()[0].winfo_children()[0]
                             ww.insert(END, '=== SERVER === ' + SOCKET_LIST_user[(msg["provenance"])] + " disconnected - bye bye\n")
                             del SOCKET_LIST_user[(msg["provenance"])]
+                            break
+
                 elif msg["msgtype"] == "listuser":
                     for keyf in msg["msg"]:
                         self.ListboxUser.insert(END, msg['msg'][keyf] )
@@ -233,6 +234,7 @@ class ThreadedClient:
         #All I/O operation will be threaded
         self.running = 1
         self.thread1 = threading.Thread(target=self.workerThread1)
+        self.thread1.daemon = True
         self.thread1.start()
 
         #Periodicall call is used to pick up the messages
@@ -315,7 +317,7 @@ if __name__ == "__main__":
     rand = random.Random()
     root = Tk()
     pseudolist = ['Boyd','Reanna','Susanna','Kenisha','Trinh','Rosalba','Carole','Stephani','Gidget','Hong','Toshia','Lahoma','Candyce','Darell','Hayden','Jeneva','Tijuana','Song','Pasquale','Samella','Jocelyn','Bruce','Esmeralda','Rheba','Bradford','Von','Cleveland','Bobbye','Madelaine','Chase','Leonila','Tanesha','Euna','Cassaundra','Mervin','Elisabeth','Jeanine','Barbar','Inga','Clementina','Doris','Mikaela','Mandy','Lucien','Marx','Carl','Angelo','Ashleigh','Dani','Leota']
-    pseudo = pseudolist[random.randint(0,49)] #User PSEUDO is random
+    pseudo = pseudolist[random.randint(0,49)] + str(random.randint(0,1000))#User PSEUDO is random
 
     client = ThreadedClient(root)
     root.title("https://github.com/dduong1/Simple-messenger        " + pseudo)
